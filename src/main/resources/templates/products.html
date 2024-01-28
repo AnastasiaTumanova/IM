@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.w3.org/1999/xhtml" xmlns:sec = "http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>Product list</title>
+</head>
+<body>
+<div th:insert="~{fragments/menu :: #nav-menu}"></div>
+<div align="right">
+    <input type="checkbox" id="feature_flag" disabled onchange="checkFeatureFlag()">
+    <label>Включить/Выключить добавление новых продуктов</label>
+</div>
+<table border="1" align="center" id = "table">
+<tr>
+  <td>Title</td>
+  <td>Price</td>
+</tr>
+  <tr th:each="product: ${products}">
+    <td th:text = "${product.title}">Foot</td>
+    <td th:text = "${product.price}">1000</td>
+    <td><a th:href="@{/products/{id}/bucket(id=${product.id})}">Add to bucket</a></td>
+  </tr>
+</table>
+    <form th:action="@{/products}" method="post" style="text-align: center" id="form_add_products">
+        <table align="center">
+            <tr>
+                <td>Title</td>
+                <td><input type="text" name="title"></td>
+            </tr>
+            <tr>
+                <td>Price</td>
+                <td><input type="number" name="price"></td>
+            </tr>
+        </table>
+        <button id="send" type="submit">Submit</button>
+    </form>
+<input type = "text" sec:authorize="hasAuthority('Admin')" style="visibility:hidden" id = "adm" value = "Admin">
+<input type= "text" sec:authorize="hasAuthority('Client')" style="visibility:hidden" id = "us" value = "Client">
+
+<script type = "text/javascript">
+    let checkbox;
+    let form_add_prod;
+    let inp1 = document.getElementById('adm');
+function checkLocalStorage(){
+    checkbox = document.getElementById('feature_flag');
+    form_add_prod = document.getElementById('form_add_products');
+
+    if (inp1!=null){
+        if(inp1.value ==="Admin")
+        {
+            checkbox.removeAttribute("disabled");
+        }
+    }
+
+    let check = localStorage.getItem("chbox");
+    let visib = localStorage.getItem("form_add");
+    console.log(check);
+    console.log(visib);
+    checkbox.checked=check;
+    form_add_prod.style.visibility = visib;
+
+}
+   function checkFeatureFlag(){
+
+        checkbox = document.getElementById('feature_flag');
+        form_add_prod = document.getElementById('form_add_products');
+        if (checkbox.checked) {
+            form_add_prod.style.visibility="hidden";
+            localStorage.setItem("chbox", true);
+            localStorage.setItem("form_add", "hidden");
+        }
+         else {
+            form_add_prod.style.visibility="visible";
+            localStorage.setItem("chbox", false);
+            localStorage.setItem("form_add", "visible");
+         }
+   }
+
+window.onload = checkLocalStorage;
+</script>
+</body>
+</html>

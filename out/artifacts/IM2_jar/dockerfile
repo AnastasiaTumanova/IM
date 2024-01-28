@@ -1,0 +1,4 @@
+FROM openjdk:11
+LABEL maintainer ="howtodoinjava"
+COPY IM2_jar/IM2.jar IM2.jar
+ENTRYPOINT ["java","-jar","IM2.jar"]
